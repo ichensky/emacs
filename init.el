@@ -71,7 +71,10 @@
 
 ;; packages to install
 (defvar package-list      '(evil xcscope flycheck undo-tree auto-complete
-				 neotree anzu golden-ratio expand-region))
+				 neotree anzu golden-ratio expand-region
+				 yasnippet
+				 go-mode go-autocomplete go-eldoc
+				 ))
 
 ;; repositories with packages
 (defvar package-archives  '(("melpa" . "http://melpa.org/packages/")
@@ -121,5 +124,24 @@
 
 (require 'expand-region)
 (global-set-key (kbd "C-=") 'er/expand-region)
+
+(require 'yasnippet)
+(yas-global-mode 1)
+
+(require 'go-mode-autoloads)
+
+(require 'go-autocomplete)
+(require 'auto-complete-config)
+(ac-config-default)
+
+(defun go-mode-setup()
+  (go-eldoc-setup)
+  (add-hook 'before-save-hook 'gofmt-before-save)
+  (local-set-key (kdb "M-.") 'godef-jump))
+
+(require 'go-eldoc)
+(add-hook 'go-mode-hook 'go-mode-setup)
+
+
 
 ;;; init.el ends here
