@@ -70,7 +70,7 @@
 ;;
 
 ;; packages to install
-(defvar package-list      '(evil xcscope flycheck undo-tree))
+(defvar package-list      '(evil xcscope flycheck undo-tree auto-complete))
 
 ;; repositories with packages
 (defvar package-archives  '(("melpa" . "http://melpa.org/packages/")
@@ -99,5 +99,7 @@
 (add-hook 'after-init-hook #'global-flycheck-mode)
 (require 'xcscope)
 
+(require 'auto-complete)
+(global-auto-complete-mode 1)
 
 ;;; init.el ends here
