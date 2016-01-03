@@ -71,7 +71,7 @@
 
 ;; packages to install
 (defvar package-list      '(evil xcscope flycheck undo-tree auto-complete
-				 neotree))
+				 neotree anzu golden-ratio expand-region))
 
 ;; repositories with packages
 (defvar package-archives  '(("melpa" . "http://melpa.org/packages/")
@@ -94,19 +94,32 @@
 ;; Packeges settings
 ;;
 
+(add-hook 'after-init-hook #'global-flycheck-mode)
+
 (require 'evil)
 (evil-mode 1)
 
-(add-hook 'after-init-hook #'global-flycheck-mode)
 (require 'xcscope)
 
 (require 'auto-complete)
 (global-auto-complete-mode 1)
 
+(require 'anzu)
+(global-anzu-mode 1)
+ 
 (require 'ido)
 (ido-mode t)
 
 (require 'neotree)
 (global-set-key [f8] 'neotree-toggle)
- 
+
+(require 'golden-ratio)
+(golden-ratio-mode 1)
+(setq golden-ratio-exclude-modes '("ediff-mode"
+				   "eshell-mode"
+				   "dired-mode"))
+
+(require 'expand-region)
+(global-set-key (kbd "C-=") 'er/expand-region)
+
 ;;; init.el ends here
