@@ -70,7 +70,8 @@
 ;;
 
 ;; packages to install
-(defvar package-list      '(evil xcscope flycheck undo-tree auto-complete))
+(defvar package-list      '(evil xcscope flycheck undo-tree auto-complete
+				 neotree))
 
 ;; repositories with packages
 (defvar package-archives  '(("melpa" . "http://melpa.org/packages/")
@@ -102,4 +103,10 @@
 (require 'auto-complete)
 (global-auto-complete-mode 1)
 
+(require 'ido)
+(ido-mode t)
+
+(require 'neotree)
+(global-set-key [f8] 'neotree-toggle)
+ 
 ;;; init.el ends here
