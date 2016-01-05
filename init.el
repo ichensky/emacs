@@ -74,6 +74,7 @@
 				 neotree anzu golden-ratio expand-region
 				 yasnippet
 				 go-mode go-autocomplete go-eldoc
+				 sql-indent
 				 ))
 
 ;; repositories with packages
@@ -142,6 +143,7 @@
 (require 'go-eldoc)
 (add-hook 'go-mode-hook 'go-mode-setup)
 
-
+(eval-after-load "sql"
+  '(load-library "sql-indent"))
 
 ;;; init.el ends here
