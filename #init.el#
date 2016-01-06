@@ -56,8 +56,7 @@
  '(custom-enabled-themes (quote (wheatgrass)))
  '(custom-safe-themes
    (quote
-    ("628278136f88aa1a151bb2d6c8a86bf2b7631fbea5f0f76cba2a0079cd910f7d" "bb08c73af94ee74453c90422485b29e5643b73b05e8de029a6909af6a3fb3f58" "1b8d67b43ff1723960eb5e0cba512a2c7a2ad544ddb2533a90101fd1852b426e" "82d2cac368ccdec2fcc7573f24c3f79654b78bf133096f9b40c20d97ec1d8016" "06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" default)))
- '(inhibit-startup-screen t))
+    ("628278136f88aa1a151bb2d6c8a86bf2b7631fbea5f0f76cba2a0079cd910f7d" "bb08c73af94ee74453c90422485b29e5643b73b05e8de029a6909af6a3fb3f58" "1b8d67b43ff1723960eb5e0cba512a2c7a2ad544ddb2533a90101fd1852b426e" "82d2cac368ccdec2fcc7573f24c3f79654b78bf133096f9b40c20d97ec1d8016" "06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" default))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -65,35 +64,14 @@
  ;; If there is more than one, they won't work right.
  )
 
-;;
-;; Enviroment settings
-;;
-
-(defun set-exec-path-from-shell-PATH ()
-  (let 
-      ((path-from-shell
-	 (replace-regexp-in-string
-                          "[ \t\n]*$"
-                          ""
-                          (shell-command-to-string "$SHELL --login -i -c 'echo $PATH'"))))
-    (setenv "PATH" path-from-shell)
-    (setq exec-path (split-string path-from-shell path-separator))))
-
-(when window-system (set-exec-path-from-shell-PATH))
-
-
-
 
 ;;
 ;; Packages initialization
 ;;
 
 ;; packages to install
-(defvar package-list      '(evil flycheck undo-tree auto-complete
-				 ;xcscope
-				 ;neotree
-				 anzu ; hilight workds
-				 golden-ratio expand-region
+(defvar package-list      '(evil xcscope flycheck undo-tree auto-complete
+				 neotree anzu golden-ratio expand-region
 				 yasnippet
 				 go-mode go-autocomplete go-eldoc
 				 sql-indent
@@ -125,19 +103,19 @@
 (require 'evil)
 (evil-mode 1)
 
-;(require 'xcscope)
+(require 'xcscope)
 
 (require 'auto-complete)
 (global-auto-complete-mode 1)
 
 (require 'anzu)
 (global-anzu-mode 1)
- 
+
 (require 'ido)
 (ido-mode t)
 
-;(require 'neotree)
-;(global-set-key [f8] 'neotree-toggle)
+(require 'neotree)
+(global-set-key [f8] 'neotree-toggle)
 
 (require 'golden-ratio)
 (golden-ratio-mode 1)
@@ -151,9 +129,8 @@
 (require 'yasnippet)
 (yas-global-mode 1)
 
-(require 'go-mode)
 (require 'go-mode-autoloads)
-(require 'go-eldoc) ; need localy intall godoc, gocode
+
 (require 'go-autocomplete)
 (require 'auto-complete-config)
 (ac-config-default)
@@ -161,11 +138,10 @@
 (defun go-mode-setup()
   (go-eldoc-setup)
   (add-hook 'before-save-hook 'gofmt-before-save)
-					;(local-set-key (kdb "M-.") 'godef-jump)
-  )
+  (local-set-key (kdb "M-.") 'godef-jump))
+
+(require 'go-eldoc)
 (add-hook 'go-mode-hook 'go-mode-setup)
-
-
 
 (eval-after-load "sql"
   '(load-library "sql-indent"))
