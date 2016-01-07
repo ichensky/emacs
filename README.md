@@ -5,3 +5,4 @@ emacs enviroment
 ```
 $ curl https://raw.githubusercontent.com/ichensky/emacs/master/init.el > ~/.emacs.d/init.el
 ```
+![Ex.](picture.png)
