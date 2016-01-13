@@ -90,6 +90,7 @@
 
 ;; packages to install
 (defvar package-list      '(evil flycheck undo-tree auto-complete
+				 csharp-mode
 				 ;xcscope
 				 ;neotree
 				 anzu ; hilight workds
@@ -169,5 +170,11 @@
 
 (eval-after-load "sql"
   '(load-library "sql-indent"))
+
+(autoload 'csharp-mode "csharp-mode" "Major mode for editing C# code." t)
+(setq auto-mode-alist
+      (append '(("\\.cs$" . csharp-mode)) auto-mode-alist))
+
+
 
 ;;; init.el ends here
