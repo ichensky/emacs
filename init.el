@@ -90,16 +90,14 @@
 
 ;; packages to install
 (defvar package-list      '(evil flycheck undo-tree auto-complete
-				 ;csharp-mode
+				 csharp-mode
 				 ;xcscope
 				 ;neotree
 				 anzu ; hilight workds
 				 golden-ratio expand-region
 				 yasnippet
-				 ;go-mode go-autocomplete go-eldoc
+				 go-mode go-autocomplete go-eldoc
 				 sql-indent
-				 perl-completion
-				 anything
 				 ))
 
 ;; repositories with packages
@@ -154,40 +152,29 @@
 (require 'yasnippet)
 (yas-global-mode 1)
 
-;(require 'go-mode)
-;(require 'go-mode-autoloads)
-;(require 'go-eldoc) ; need localy intall godoc, gocode
-;(require 'go-autocomplete)
-;(require 'auto-complete-config)
-;(ac-config-default)
-;
-;(defun go-mode-setup()
-  ;(go-eldoc-setup)
-  ;(add-hook 'before-save-hook 'gofmt-before-save)
-					;;(local-set-key (kdb "M-.") 'godef-jump)
-  ;)
-;(add-hook 'go-mode-hook 'go-mode-setup)
+(require 'go-mode)
+(require 'go-mode-autoloads)
+(require 'go-eldoc) ; need localy intall godoc, gocode
+(require 'go-autocomplete)
+(require 'auto-complete-config)
+(ac-config-default)
+
+(defun go-mode-setup()
+  (go-eldoc-setup)
+  (add-hook 'before-save-hook 'gofmt-before-save)
+					;(local-set-key (kdb "M-.") 'godef-jump)
+  )
+(add-hook 'go-mode-hook 'go-mode-setup)
 
 
 
 (eval-after-load "sql"
   '(load-library "sql-indent"))
 
-;(autoload 'csharp-mode "csharp-mode" "Major mode for editing C# code." t)
-;(setq auto-mode-alist
-      ;(append '(("\\.cs$" . csharp-mode)) auto-mode-alist))
+(autoload 'csharp-mode "csharp-mode" "Major mode for editing C# code." t)
+(setq auto-mode-alist
+      (append '(("\\.cs$" . csharp-mode)) auto-mode-alist))
 
-(add-hook 'cperl-mode-hook
-          (lambda()
-            (require 'perl-completion)
-            (perl-completion-mode t)))
-(add-hook  'cperl-mode-hook
-           (lambda ()
-             (when (require 'auto-complete nil t) ; no error whatever auto-complete.el is not installed.
-               (auto-complete-mode t)
-               (make-variable-buffer-local 'ac-sources)
-               (setq ac-sources
-                     '(ac-source-perl-completion)))))
+
 
 ;;; init.el ends here
-
