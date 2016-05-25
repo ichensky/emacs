@@ -100,6 +100,7 @@
 				 sql-indent
 				 perl-completion
 				 anything
+				 haskell-mode
 				 ))
 
 ;; repositories with packages
@@ -188,6 +189,9 @@
                (make-variable-buffer-local 'ac-sources)
                (setq ac-sources
                      '(ac-source-perl-completion)))))
+
+
+(require 'haskell-mode)
 
 ;;; init.el ends here
 
