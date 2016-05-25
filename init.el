@@ -101,6 +101,22 @@
 				 perl-completion
 				 anything
 				 haskell-mode
+				 hindent ; indent haskell code
+				 ghc ; apt-get install cabal-install
+					; cabal update
+					; cabal install hasktags <- navigate to definitions
+					; cabal install stylish-haskell <- code formatter
+					;  
+					; 
+					; cabal install ghc-mod
+				        ;
+				        ; apt-get install happy
+					; cabal install hlint      <- to write goode code
+					; //apt-get install hoogle
+				        ; cabal install hoogle  <- get info about functions
+					; hoogle data
+					;TODO:
+ 				 ; https://github.com/serras/emacs-haskell-tutorial/blob/master/tutorial.md#ghc-mod
 				 ))
 
 ;; repositories with packages
@@ -190,8 +206,45 @@
                (setq ac-sources
                      '(ac-source-perl-completion)))))
 
+;;
+;; Haskell
+;;
+(add-hook 'haskell-mode-hook #'hindent-mode)
+(eval-after-load 'haskell-mode
+          '(define-key haskell-mode-map [f8] 'haskell-navigate-imports))
 
-(require 'haskell-mode)
+
+(custom-set-variables
+  '(haskell-process-suggest-remove-import-lines t)
+  '(haskell-process-auto-import-loaded-modules t)
+  '(haskell-process-log t))
+(eval-after-load 'haskell-mode '(progn
+  (define-key haskell-mode-map (kbd "C-c C-l") 'haskell-process-load-or-reload)
+  (define-key haskell-mode-map (kbd "C-c C-z") 'haskell-interactive-switch)
+  (define-key haskell-mode-map (kbd "C-c C-n C-t") 'haskell-process-do-type)
+  (define-key haskell-mode-map (kbd "C-c C-n C-i") 'haskell-process-do-info)
+  (define-key haskell-mode-map (kbd "C-c C-n C-c") 'haskell-process-cabal-build)
+  (define-key haskell-mode-map (kbd "C-c C-n c") 'haskell-process-cabal)))
+(eval-after-load 'haskell-cabal '(progn
+  (define-key haskell-cabal-mode-map (kbd "C-c C-z") 'haskell-interactive-switch)
+  (define-key haskell-cabal-mode-map (kbd "C-c C-k") 'haskell-interactive-mode-clear)
+  (define-key haskell-cabal-mode-map (kbd "C-c C-c") 'haskell-process-cabal-build)
+  (define-key haskell-cabal-mode-map (kbd "C-c c") 'haskell-process-cabal)))
+
+(custom-set-variables '(haskell-process-type 'cabal-repl))
+
+
+
+
+
+(custom-set-variables '(haskell-tags-on-save t))
+
+
+(autoload 'ghc-init "ghc" nil t)
+(autoload 'ghc-debug "ghc" nil t)
+(add-hook 'haskell-mode-hook (lambda () (ghc-init)))
+
+
 
 ;;; init.el ends here
 
