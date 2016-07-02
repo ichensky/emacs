@@ -245,6 +245,9 @@
 (add-hook 'haskell-mode-hook (lambda () (ghc-init)))
 
 
+(setq-default c-basic-offset 8
+                  tab-width 8
+                  indent-tabs-mode t)
 
 ;;; init.el ends here
 
