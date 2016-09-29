@@ -41,8 +41,6 @@
 (scroll-bar-mode -1)
 (setq column-number-mode t)
 
-(setq x-super-keysym 'meta)
-
 ;;
 ;; Theme settings
 ;;
