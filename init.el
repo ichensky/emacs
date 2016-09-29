@@ -39,6 +39,7 @@
 (menu-bar-mode -1)
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
+(setq column-number-mode t)
 
 ;;
 ;; Theme settings
@@ -90,33 +91,11 @@
 
 ;; packages to install
 (defvar package-list      '(evil flycheck undo-tree auto-complete
-				 ;csharp-mode
-				 ;xcscope
-				 ;neotree
-				 anzu ; hilight workds
+				 anzu ; hilight words
 				 golden-ratio expand-region
 				 yasnippet
-				 ;go-mode go-autocomplete go-eldoc
 				 sql-indent
 				 perl-completion
-				 anything
-				 haskell-mode
-				 hindent ; indent haskell code
-				 ghc ; apt-get install cabal-install
-					; cabal update
-					; cabal install hasktags <- navigate to definitions
-					; cabal install stylish-haskell <- code formatter
-					;  
-					; 
-					; cabal install ghc-mod
-				        ;
-				        ; apt-get install happy
-					; cabal install hlint      <- to write goode code
-					; //apt-get install hoogle
-				        ; cabal install hoogle  <- get info about functions
-					; hoogle data
-					;TODO:
- 				 ; https://github.com/serras/emacs-haskell-tutorial/blob/master/tutorial.md#ghc-mod
 				 ))
 
 ;; repositories with packages
@@ -140,24 +119,19 @@
 ;; Packeges settings
 ;;
 
-(add-hook 'after-init-hook #'global-flycheck-mode)
-
 (require 'evil)
 (evil-mode 1)
 
-;(require 'xcscope)
+(add-hook 'after-init-hook #'global-flycheck-mode)
 
 (require 'auto-complete)
 (global-auto-complete-mode 1)
 
 (require 'anzu)
 (global-anzu-mode 1)
- 
+
 (require 'ido)
 (ido-mode t)
-
-;(require 'neotree)
-;(global-set-key [f8] 'neotree-toggle)
 
 (require 'golden-ratio)
 (golden-ratio-mode 1)
@@ -171,83 +145,33 @@
 (require 'yasnippet)
 (yas-global-mode 1)
 
-;(require 'go-mode)
-;(require 'go-mode-autoloads)
-;(require 'go-eldoc) ; need localy intall godoc, gocode
-;(require 'go-autocomplete)
-;(require 'auto-complete-config)
-;(ac-config-default)
-;
-;(defun go-mode-setup()
-  ;(go-eldoc-setup)
-  ;(add-hook 'before-save-hook 'gofmt-before-save)
-					;;(local-set-key (kdb "M-.") 'godef-jump)
-  ;)
-;(add-hook 'go-mode-hook 'go-mode-setup)
-
-
-
 (eval-after-load "sql"
   '(load-library "sql-indent"))
 
-;(autoload 'csharp-mode "csharp-mode" "Major mode for editing C# code." t)
-;(setq auto-mode-alist
-      ;(append '(("\\.cs$" . csharp-mode)) auto-mode-alist))
-
 (add-hook 'cperl-mode-hook
-          (lambda()
-            (require 'perl-completion)
-            (perl-completion-mode t)))
+	  (lambda()
+	    (require 'perl-completion)
+	    (perl-completion-mode t)))
 (add-hook  'cperl-mode-hook
-           (lambda ()
-             (when (require 'auto-complete nil t) ; no error whatever auto-complete.el is not installed.
-               (auto-complete-mode t)
-               (make-variable-buffer-local 'ac-sources)
-               (setq ac-sources
-                     '(ac-source-perl-completion)))))
-
-;;
-;; Haskell
-;;
-(add-hook 'haskell-mode-hook #'hindent-mode)
-(eval-after-load 'haskell-mode
-          '(define-key haskell-mode-map [f8] 'haskell-navigate-imports))
-
-
-(custom-set-variables
-  '(haskell-process-suggest-remove-import-lines t)
-  '(haskell-process-auto-import-loaded-modules t)
-  '(haskell-process-log t))
-(eval-after-load 'haskell-mode '(progn
-  (define-key haskell-mode-map (kbd "C-c C-l") 'haskell-process-load-or-reload)
-  (define-key haskell-mode-map (kbd "C-c C-z") 'haskell-interactive-switch)
-  (define-key haskell-mode-map (kbd "C-c C-n C-t") 'haskell-process-do-type)
-  (define-key haskell-mode-map (kbd "C-c C-n C-i") 'haskell-process-do-info)
-  (define-key haskell-mode-map (kbd "C-c C-n C-c") 'haskell-process-cabal-build)
-  (define-key haskell-mode-map (kbd "C-c C-n c") 'haskell-process-cabal)))
-(eval-after-load 'haskell-cabal '(progn
-  (define-key haskell-cabal-mode-map (kbd "C-c C-z") 'haskell-interactive-switch)
-  (define-key haskell-cabal-mode-map (kbd "C-c C-k") 'haskell-interactive-mode-clear)
-  (define-key haskell-cabal-mode-map (kbd "C-c C-c") 'haskell-process-cabal-build)
-  (define-key haskell-cabal-mode-map (kbd "C-c c") 'haskell-process-cabal)))
-
-(custom-set-variables '(haskell-process-type 'cabal-repl))
-
-
-
-
-
-(custom-set-variables '(haskell-tags-on-save t))
-
-
-(autoload 'ghc-init "ghc" nil t)
-(autoload 'ghc-debug "ghc" nil t)
-(add-hook 'haskell-mode-hook (lambda () (ghc-init)))
-
+	   (lambda ()
+	     (when (require 'auto-complete nil t) ; no error whatever auto-complete.el is not installed.
+	       (auto-complete-mode t)
+	       (make-variable-buffer-local 'ac-sources)
+	       (setq ac-sources
+		     '(ac-source-perl-completion)))))
 
 (setq-default c-basic-offset 8
-                  tab-width 8
-                  indent-tabs-mode t)
+	      tab-width 8
+	      indent-tabs-mode t)
+
+(setq c-default-style '((other . "linux")))
+
+
+;reindent the new line
+(defun my-make-CR-do-indent ()
+  (define-key c-mode-base-map "\C-m" 'c-context-line-break))
+
+(add-hook 'c-initialization-hook 'my-make-CR-do-indent)
 
 ;;; init.el ends here
 
