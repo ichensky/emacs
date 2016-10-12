@@ -167,11 +167,26 @@
 (setq c-default-style '((other . "linux")))
 
 
-;reindent the new line
+;;reindent the new line
 (defun my-make-CR-do-indent ()
   (define-key c-mode-base-map "\C-m" 'c-context-line-break))
 
 (add-hook 'c-initialization-hook 'my-make-CR-do-indent)
+
+
+;;hide-show blocks of text
+(add-hook 'c-mode-common-hook   'hs-minor-mode)
+(add-hook 'emacs-lisp-mode-hook 'hs-minor-mode)
+(add-hook 'java-mode-hook       'hs-minor-mode)
+(add-hook 'lisp-mode-hook       'hs-minor-mode)
+(add-hook 'perl-mode-hook       'hs-minor-mode)
+(add-hook 'sh-mode-hook         'hs-minor-mode)
+(global-set-key (kbd "C-c H") 'hs-hide-all)         ;hide all blocks of code
+(global-set-key (kbd "C-c S") 'hs-show-all)         ;show all blocks of code
+(global-set-key (kbd "C-c +") 'hs-toggle-hiding)    ;hide/show block of code
+;;(global-set-key (kbd "C-c s") 'hs-show-block)       ;show block of code
+;;(global-set-key (kbd "C-c h") 'hs-hide-block)       ;hide block of code
+
 
 ;;; init.el ends here
 
