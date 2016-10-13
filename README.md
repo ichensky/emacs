@@ -5,8 +5,8 @@ emacs enviroment
 
 * Cygwin -> apt-cyg
 
-* $ apt-cyg install curl gnutls
+* ```$ apt-cyg install curl gnutls```
 
-* $ curl https://raw.githubusercontent.com/ichensky/emacs/master/init.el > ~/.emacs.d/init.el
-```
+* ```$ curl https://raw.githubusercontent.com/ichensky/emacs/master/init.el > ~/.emacs.d/init.el```
+
 ![Ex.](picture.png)
