@@ -175,25 +175,9 @@
 ;; Other settings 
 ;;
 
-;; perl 
-(add-hook 'cperl-mode-hook
-	  (lambda()
-	    (require 'perl-completion)
-	    (perl-completion-mode t)))
-(add-hook  'cperl-mode-hook
-	   (lambda ()
-	     (when (require 'auto-complete nil t) ; no error whatever auto-complete.el is not installed.
-	       (auto-complete-mode t)
-	       (make-variable-buffer-local 'ac-sources)
-	       (setq ac-sources
-		     '(ac-source-perl-completion)))))
-
-;; c language
-(setq-default c-basic-offset 8
-	      tab-width 8
-	      indent-tabs-mode t)
-
-(setq c-default-style '((other . "linux")))
+;; winner-mode -> open latly closed window 'C-c left' 'C-c rigth'
+(when (fboundp 'winner-mode)
+      (winner-mode 1))
 
 
 ;; hs-minor-mode -> hide-show blocks of text
@@ -242,6 +226,27 @@
 	     ad-do-it))))
 
 (global-set-key (kbd "C-c g") 'find-tag)         ;got to tag 
+
+;; perl 
+(add-hook 'cperl-mode-hook
+	  (lambda()
+	    (require 'perl-completion)
+	    (perl-completion-mode t)))
+(add-hook  'cperl-mode-hook
+	   (lambda ()
+	     (when (require 'auto-complete nil t) ; no error whatever auto-complete.el is not installed.
+	       (auto-complete-mode t)
+	       (make-variable-buffer-local 'ac-sources)
+	       (setq ac-sources
+		     '(ac-source-perl-completion)))))
+
+;; c language
+(setq-default c-basic-offset 8
+	      tab-width 8
+	      indent-tabs-mode t)
+
+(setq c-default-style '((other . "linux")))
+
 
 
 ;;; init.el ends here
