@@ -179,6 +179,9 @@
 (when (fboundp 'winner-mode)
       (winner-mode 1))
 
+;; windmove -> change window 'M left' 'M rigth' 'M up' 'M down'
+(windmove-default-keybindings 'meta)
+
 
 ;; hs-minor-mode -> hide-show blocks of text
 (defun hs-minor-mode-hook(hook)
