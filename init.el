@@ -259,50 +259,41 @@
           (lambda ()
             (c-eldoc-define-keybindings c++-mode-map)))
 
+(defun eldoc-get-arg-index ()
+  (save-excursion
+    (let ((fn (eldoc-fnsym-in-current-sexp))
+          (i 0))
+      (unless (memq (char-syntax (char-before)) '(32 39)) ; ? , ?'
+        (condition-case err
+            (backward-sexp)             ;for safety
+          (error 1)))
+      (condition-case err
+          (while (not (equal fn (eldoc-current-symbol)))
+            (setq i (1+ i))
+            (backward-sexp))
+        (error 1))
+      (max 0 i))))
 
+(defun eldoc-highlight-nth-arg (doc n)
+  (cond ((null doc) "")
+        ((<= n 0) doc)
+        (t
+         (let ((i 0))
+           (mapconcat
+            (lambda (arg)
+              (if (member arg '("&optional" "&rest"))
+                  arg
+                (prog2
+                    (if (= i n)
+                        (put-text-property 0 (length arg) 'face 'underline arg))
+                    arg
+                  (setq i (1+ i)))))
+            (split-string doc) " ")))))
 
-
-
-
-
-(define-minor-mode my-contextual-help-mode
-  "Displays help for the current symbol whenever the *Help* buffer is visible.
-
-Advises `eldoc-print-current-symbol-info'."
-  :lighter " C-h"
-  :global t
-  (require 'help-mode) ;; for `help-xref-interned'
-  (message "Contextual help is %s" (if my-contextual-help-mode "on" "off"))
-  (and my-contextual-help-mode
-       (eldoc-mode 1)
-       (eldoc-current-symbol)
-       (my-contextual-help :force)))
-
-(defadvice eldoc-print-current-symbol-info (before my-contextual-help activate)
-  "Triggers contextual elisp *Help*. Enabled by `my-contextual-help-mode'."
-  (and my-contextual-help-mode
-       (derived-mode-p 'emacs-lisp-mode)
-       (my-contextual-help)))
-
-(defun my-contextual-help (&optional force)
-  "Display function or variable at point in *Help* buffer, if visible."
-  (when (or force (get-buffer-window (help-buffer)))
-    (let ((sym (eldoc-current-symbol)))
-      ;; If something else changes the help buffer contents, ensure we
-      ;; don't immediately revert back to the current symbol's help.
-      (and sym
-           (not (keywordp sym))
-           (not (eq sym (get 'my-contextual-help 'last-sym)))
-           (put 'my-contextual-help 'last-sym sym)
-           (save-selected-window
-             (help-xref-interned sym))))))
-
-(my-contextual-help-mode 1)
-
-
-
-
-
+(defadvice eldoc-get-fnsym-args-string (around highlight activate)
+  ""
+  (setq ad-return-value (eldoc-highlight-nth-arg ad-do-it
+                         (eldoc-get-arg-index))))
 
 ;; perl 
 (add-hook 'cperl-mode-hook
