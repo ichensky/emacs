@@ -241,11 +241,23 @@
 ;; eldoc
 ;(install-elisp-from-emacswiki "c-eldoc.el")
 (auto-install-from-github-local "c-eldoc.el")
+(setq c-eldoc-includes "`pkg-config gtk+-3.0 --cflags` -I./ -I../ ")
 (load (concat auto-install-directory "c-eldoc"))
 (add-hook 'c-mode-hook 'c-turn-on-eldoc-mode)
+(add-hook 'c++-mode-hook 'c-turn-on-eldoc-mode)
 (add-hook 'emacs-lisp-mode-hook 'turn-on-eldoc-mode)
 (add-hook 'lisp-interaction-mode-hook 'turn-on-eldoc-mode)
 (add-hook 'ielm-mode-hook 'turn-on-eldoc-mode)
+
+;force update eldoc
+(defun c-eldoc-define-keybindings (map)
+  (define-key map (kbd "C-c d") 'c-eldoc-force-cache-update))
+(add-hook 'c-mode-hook
+          (lambda ()
+            (c-eldoc-define-keybindings c-mode-map)))
+(add-hook 'c++-mode-hook
+          (lambda ()
+            (c-eldoc-define-keybindings c++-mode-map)))
 
 
 ;; perl 
