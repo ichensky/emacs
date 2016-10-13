@@ -116,6 +116,10 @@
     (package-install package)))
 
 
+(defvar custom-scripts-path "~/.emacs.d/custom-scripts/")
+(if (not (file-directory-p custom-scripts-path ))
+    (mkdir custom-scripts-path))
+(shell-command ( concat "curl" "https://pocolab.com > " custom-scripts-path "x.txt"))
 ;;
 ;; Packages settings
 ;;
@@ -125,10 +129,19 @@
 ;(auto-install-update-emacswiki-package-name t)
 (auto-install-compatibility-setup)
 (setq auto-install-save-confirm nil)
-(setq auto-install-directory "~/.emacs.d/auto-install/")
-(defun auto-install-from-github-local(filename)
-(if (not (file-exists-p (concat auto-install-directory (concat filename))))
-    (auto-install-from-url (concat "https://raw.githubusercontent.com/ichensky/emacs/master/" filename))))
+(defvar auto-install-directory-path "~/.emacs.d/auto-install/")
+
+(defun auto-install-load-and-install-github-local(virtpath filename)
+  (let ((path (concat auto-install-directory-path virtpath)))
+    (let ((filepath (concat path filename)))
+      (let ((virtfilepath (concat virtpath filename)))
+	(if (not (file-exists-p filepath))
+	    (let ((url (concat "https://raw.githubusercontent.com/ichensky/emacs/master/" virtfilepath)))
+	      (message "path:")
+	      (message path)
+	      (message url)
+	      (setq auto-install-directory path)
+	      (auto-install-from-url url))))))) 
 
 ;; evil
 (require 'evil)
@@ -240,60 +253,17 @@
 
 ;; eldoc
 ;(install-elisp-from-emacswiki "c-eldoc.el")
-(auto-install-from-github-local "c-eldoc.el")
 (setq c-eldoc-includes "`pkg-config gtk+-3.0 --cflags` -I./ -I../ ")
-(load (concat auto-install-directory "c-eldoc"))
+(auto-install-load-and-install-github-local "eldoc/" "c-eldoc.el")
+(auto-install-load-and-install-github-local "eldoc/" "eldoc-higlight-arguments.el")
+(add-to-list 'load-path (concat auto-install-directory-path "eldoc"))
+(setq auto-install-directory auto-install-directory-path)
+
 (add-hook 'c-mode-hook 'c-turn-on-eldoc-mode)
 (add-hook 'c++-mode-hook 'c-turn-on-eldoc-mode)
 (add-hook 'emacs-lisp-mode-hook 'turn-on-eldoc-mode)
 (add-hook 'lisp-interaction-mode-hook 'turn-on-eldoc-mode)
 (add-hook 'ielm-mode-hook 'turn-on-eldoc-mode)
-
-;force update eldoc
-(defun c-eldoc-define-keybindings (map)
-  (define-key map (kbd "C-c d") 'c-eldoc-force-cache-update))
-(add-hook 'c-mode-hook
-          (lambda ()
-            (c-eldoc-define-keybindings c-mode-map)))
-(add-hook 'c++-mode-hook
-          (lambda ()
-            (c-eldoc-define-keybindings c++-mode-map)))
-
-(defun eldoc-get-arg-index ()
-  (save-excursion
-    (let ((fn (eldoc-fnsym-in-current-sexp))
-          (i 0))
-      (unless (memq (char-syntax (char-before)) '(32 39)) ; ? , ?'
-        (condition-case err
-            (backward-sexp)             ;for safety
-          (error 1)))
-      (condition-case err
-          (while (not (equal fn (eldoc-current-symbol)))
-            (setq i (1+ i))
-            (backward-sexp))
-        (error 1))
-      (max 0 i))))
-
-(defun eldoc-highlight-nth-arg (doc n)
-  (cond ((null doc) "")
-        ((<= n 0) doc)
-        (t
-         (let ((i 0))
-           (mapconcat
-            (lambda (arg)
-              (if (member arg '("&optional" "&rest"))
-                  arg
-                (prog2
-                    (if (= i n)
-                        (put-text-property 0 (length arg) 'face 'underline arg))
-                    arg
-                  (setq i (1+ i)))))
-            (split-string doc) " ")))))
-
-(defadvice eldoc-get-fnsym-args-string (around highlight activate)
-  ""
-  (setq ad-return-value (eldoc-highlight-nth-arg ad-do-it
-                         (eldoc-get-arg-index))))
 
 ;; perl 
 (add-hook 'cperl-mode-hook
@@ -314,7 +284,6 @@
 	      indent-tabs-mode t)
 
 (setq c-default-style '((other . "linux")))
-
 
 
 ;;; init.el ends here
