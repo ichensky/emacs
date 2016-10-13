@@ -70,18 +70,12 @@
 ;; Enviroment settings
 ;;
 
-(defun set-exec-path-from-shell-PATH ()
-  (let 
-      ((path-from-shell
-	(replace-regexp-in-string
-	 "[ \t\n]*$"
-	 ""
-	 (shell-command-to-string "$SHELL --login -i -c 'echo $PATH'"))))
-    (setenv "PATH" path-from-shell)
-    (setq exec-path (split-string path-from-shell path-separator))))
+(defun setenvvariable(key value)
+  (setenv key (concat (getenv key) ":" value))
+  (setq exec-path (append exec-path '(value))))
 
-(when window-system (set-exec-path-from-shell-PATH))
-
+(setenvvariable "PATH" "c:/cygwin/bin")
+(setenvvariable "PATH" "c:/cygwin64/bin")
 
 
 
@@ -90,7 +84,9 @@
 ;;
 
 ;; packages to install
-(defvar package-list      '(evil
+(defvar package-list      '(
+			    auto-install ; install lisp files
+			    evil
 			    flycheck
 			    undo-tree
 			    auto-complete
@@ -124,6 +120,16 @@
 ;; Packages settings
 ;;
 
+;; auto-install
+(require 'auto-install)
+;(auto-install-update-emacswiki-package-name t)
+(auto-install-compatibility-setup)
+(setq auto-install-save-confirm nil)
+(setq auto-install-directory "~/.emacs.d/auto-install/")
+(defun auto-install-from-github-local(filename)
+(if (not (file-exists-p (concat auto-install-directory (concat filename))))
+    (auto-install-from-url (concat "https://raw.githubusercontent.com/ichensky/emacs/master/" filename))))
+
 ;; evil
 (require 'evil)
 (evil-mode 1)
@@ -143,6 +149,7 @@
 ;; auto-complete
 (require 'auto-complete)
 (global-auto-complete-mode 1)
+(setq auto-install-save-confirm nil)
 
 ;; anzu
 (require 'anzu)
@@ -229,6 +236,17 @@
 	     ad-do-it))))
 
 (global-set-key (kbd "C-c g") 'find-tag)         ;got to tag 
+
+
+;; eldoc
+;(install-elisp-from-emacswiki "c-eldoc.el")
+(auto-install-from-github-local "c-eldoc.el")
+(load (concat auto-install-directory "c-eldoc"))
+(add-hook 'c-mode-hook 'c-turn-on-eldoc-mode)
+(add-hook 'emacs-lisp-mode-hook 'turn-on-eldoc-mode)
+(add-hook 'lisp-interaction-mode-hook 'turn-on-eldoc-mode)
+(add-hook 'ielm-mode-hook 'turn-on-eldoc-mode)
+
 
 ;; perl 
 (add-hook 'cperl-mode-hook
