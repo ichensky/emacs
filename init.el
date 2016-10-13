@@ -73,10 +73,10 @@
 (defun set-exec-path-from-shell-PATH ()
   (let 
       ((path-from-shell
-	 (replace-regexp-in-string
-                          "[ \t\n]*$"
-                          ""
-                          (shell-command-to-string "$SHELL --login -i -c 'echo $PATH'"))))
+	(replace-regexp-in-string
+	 "[ \t\n]*$"
+	 ""
+	 (shell-command-to-string "$SHELL --login -i -c 'echo $PATH'"))))
     (setenv "PATH" path-from-shell)
     (setq exec-path (split-string path-from-shell path-separator))))
 
@@ -90,13 +90,18 @@
 ;;
 
 ;; packages to install
-(defvar package-list      '(evil flycheck undo-tree auto-complete
-				 anzu ; hilight words
-				 golden-ratio expand-region
-				 yasnippet
-				 sql-indent
-				 perl-completion
-				 ))
+(defvar package-list      '(evil
+			    flycheck
+			    undo-tree
+			    auto-complete
+			    smex ; most recently executed commands M-x 
+			    anzu ; hilight words
+			    golden-ratio
+			    expand-region
+			    yasnippet
+			    sql-indent
+			    perl-completion
+			    ))
 
 ;; repositories with packages
 (defvar package-archives  '(("melpa" . "http://melpa.org/packages/")
@@ -119,35 +124,58 @@
 ;; Packages settings
 ;;
 
+;; evil
 (require 'evil)
 (evil-mode 1)
 
+;; smex
+(require 'smex)
+(smex-initialize)
+(global-set-key (kbd "M-x") 'smex)
+(global-set-key (kbd "M-X") 'smex-major-mode-commands)
+;; This is old M-x.
+(global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
+
+
+;; flycheck
 (add-hook 'after-init-hook #'global-flycheck-mode)
 
+;; auto-complete
 (require 'auto-complete)
 (global-auto-complete-mode 1)
 
+;; anzu
 (require 'anzu)
 (global-anzu-mode 1)
 
+;; ido
 (require 'ido)
 (ido-mode t)
 
+;; golden-ratio
 (require 'golden-ratio)
 (golden-ratio-mode 1)
 (setq golden-ratio-exclude-modes '("ediff-mode"
 				   "eshell-mode"
 				   "dired-mode"))
 
+;; expand-region
 (require 'expand-region)
 (global-set-key (kbd "C-=") 'er/expand-region)
 
+;; yasnippet
 (require 'yasnippet)
 (yas-global-mode 1)
 
+;; sql-indent
 (eval-after-load "sql"
   '(load-library "sql-indent"))
 
+;;
+;; Other settings 
+;;
+
+;; perl 
 (add-hook 'cperl-mode-hook
 	  (lambda()
 	    (require 'perl-completion)
@@ -160,6 +188,7 @@
 	       (setq ac-sources
 		     '(ac-source-perl-completion)))))
 
+;; c language
 (setq-default c-basic-offset 8
 	      tab-width 8
 	      indent-tabs-mode t)
@@ -167,17 +196,17 @@
 (setq c-default-style '((other . "linux")))
 
 
-;;hide-show blocks of text
+;; hs-minor-mode -> hide-show blocks of text
 (defun hs-minor-mode-hook(hook)
-(add-hook hook   'hs-minor-mode)
-(add-hook hook
-	  (lambda ()
-	    (local-set-key (kbd "C-c H") 
-			   'hs-hide-all)
-	    (local-set-key (kbd "C-c S")
-			   'hs-show-all)
-	    (local-set-key (kbd "C-c +")
-			   'hs-toggle-hiding))))
+  (add-hook hook   'hs-minor-mode)
+  (add-hook hook
+	    (lambda ()
+	      (local-set-key (kbd "C-c H") 
+			     'hs-hide-all)
+	      (local-set-key (kbd "C-c S")
+			     'hs-show-all)
+	      (local-set-key (kbd "C-c +")
+			     'hs-toggle-hiding))))
 
 (hs-minor-mode-hook 'c-mode-common-hook)
 (hs-minor-mode-hook 'emacs-lisp-mode-hook)
@@ -190,7 +219,7 @@
   "Create tags file."
   (interactive "DDirectory: ")
   (eshell-command
-         (format "find %s -type f -name \"*.[ch]\" | etags -" dir-name)))
+   (format "find %s -type f -name \"*.[ch]\" | etags -" dir-name)))
 
 (defun er-refresh-etags (&optional extension)
   "Run etags on all peer files in current dir and reload them silently."
@@ -198,19 +227,19 @@
   (shell-command (format "etags *.%s" (or extension "el")))
   (let ((tags-revert-without-query t))  ; don't query, revert silently
     (visit-tags-table default-directory nil)))
- 
+
 (defadvice find-tag (around refresh-etags activate)
-     "Rerun etags and reload tags if tag not found and redo find-tag.
+  "Rerun etags and reload tags if tag not found and redo find-tag.
    If buffer is modified, ask about save before running etags."
-     (let ((extension (file-name-extension (buffer-file-name))))
-       (condition-case err
-	   ad-do-it
-	 (error (and (buffer-modified-p)
-		     (not (ding))
-		     (y-or-n-p "Buffer is modified, save it? ")
-		     (save-buffer))
-		(er-refresh-etags extension)
-		         ad-do-it))))
+  (let ((extension (file-name-extension (buffer-file-name))))
+    (condition-case err
+	ad-do-it
+      (error (and (buffer-modified-p)
+		  (not (ding))
+		  (y-or-n-p "Buffer is modified, save it? ")
+		  (save-buffer))
+	     (er-refresh-etags extension)
+	     ad-do-it))))
 
 (global-set-key (kbd "C-c g") 'find-tag)         ;got to tag 
 
