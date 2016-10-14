@@ -5,8 +5,10 @@ emacs enviroment
 
 * Cygwin -> apt-cyg
 
-* ```$ apt-cyg install curl gnutls```
+* ```$ apt-cyg install git```
 
-* ```$ curl https://raw.githubusercontent.com/ichensky/emacs/master/init.el > ~/.emacs.d/init.el```
+* ```$ git clone https://github.com/ichensky/emacs```
+
+* ```$ cd emacs && ./install.sh```
 
 ![Ex.](picture.png)

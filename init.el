@@ -77,7 +77,7 @@
 (setenvvariable "PATH" "c:/cygwin/bin")
 (setenvvariable "PATH" "c:/cygwin64/bin")
 
-
+(defvar custom-scripts-path "~/.emacs.d/custom_scripts/")
 
 ;;
 ;; Packages initialization
@@ -85,7 +85,6 @@
 
 ;; packages to install
 (defvar package-list      '(
-			    auto-install ; install lisp files
 			    evil
 			    flycheck
 			    undo-tree
@@ -116,32 +115,9 @@
     (package-install package)))
 
 
-(defvar custom-scripts-path "~/.emacs.d/custom-scripts/")
-(if (not (file-directory-p custom-scripts-path ))
-    (mkdir custom-scripts-path))
-(shell-command ( concat "curl" "https://pocolab.com > " custom-scripts-path "x.txt"))
 ;;
 ;; Packages settings
 ;;
-
-;; auto-install
-(require 'auto-install)
-;(auto-install-update-emacswiki-package-name t)
-(auto-install-compatibility-setup)
-(setq auto-install-save-confirm nil)
-(defvar auto-install-directory-path "~/.emacs.d/auto-install/")
-
-(defun auto-install-load-and-install-github-local(virtpath filename)
-  (let ((path (concat auto-install-directory-path virtpath)))
-    (let ((filepath (concat path filename)))
-      (let ((virtfilepath (concat virtpath filename)))
-	(if (not (file-exists-p filepath))
-	    (let ((url (concat "https://raw.githubusercontent.com/ichensky/emacs/master/" virtfilepath)))
-	      (message "path:")
-	      (message path)
-	      (message url)
-	      (setq auto-install-directory path)
-	      (auto-install-from-url url))))))) 
 
 ;; evil
 (require 'evil)
@@ -252,12 +228,11 @@
 
 
 ;; eldoc
-;(install-elisp-from-emacswiki "c-eldoc.el")
 (setq c-eldoc-includes "`pkg-config gtk+-3.0 --cflags` -I./ -I../ ")
-(auto-install-load-and-install-github-local "eldoc/" "c-eldoc.el")
-(auto-install-load-and-install-github-local "eldoc/" "eldoc-higlight-arguments.el")
-(add-to-list 'load-path (concat auto-install-directory-path "eldoc"))
-(setq auto-install-directory auto-install-directory-path)
+(let((path (concat custom-scripts-path "eldoc/")))
+(load (concat  path "c-eldoc.el"))
+(load (concat  path "eldoc-higlight-arguments.el"))
+)
 
 (add-hook 'c-mode-hook 'c-turn-on-eldoc-mode)
 (add-hook 'c++-mode-hook 'c-turn-on-eldoc-mode)
