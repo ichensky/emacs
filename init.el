@@ -95,7 +95,6 @@
 			    expand-region
 			    yasnippet
 			    sql-indent
-			    perl-completion
 			    ))
 
 ;; repositories with packages
@@ -194,7 +193,6 @@
 (hs-minor-mode-hook 'c-mode-common-hook)
 (hs-minor-mode-hook 'emacs-lisp-mode-hook)
 (hs-minor-mode-hook 'lisp-mode-hook)
-(hs-minor-mode-hook 'perl-mode-hook)
 (hs-minor-mode-hook 'sh-mode-hook)
 
 ;;etags
@@ -239,19 +237,6 @@
 (add-hook 'emacs-lisp-mode-hook 'turn-on-eldoc-mode)
 (add-hook 'lisp-interaction-mode-hook 'turn-on-eldoc-mode)
 (add-hook 'ielm-mode-hook 'turn-on-eldoc-mode)
-
-;; perl 
-(add-hook 'cperl-mode-hook
-	  (lambda()
-	    (require 'perl-completion)
-	    (perl-completion-mode t)))
-(add-hook  'cperl-mode-hook
-	   (lambda ()
-	     (when (require 'auto-complete nil t) ; no error whatever auto-complete.el is not installed.
-	       (auto-complete-mode t)
-	       (make-variable-buffer-local 'ac-sources)
-	       (setq ac-sources
-		     '(ac-source-perl-completion)))))
 
 ;; c language
 (setq-default c-basic-offset 8
