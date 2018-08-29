@@ -95,6 +95,7 @@
 			    expand-region
 			    yasnippet
 			    sql-indent
+			    markdown-mode
 			    ))
 
 ;; repositories with packages
