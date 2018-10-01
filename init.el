@@ -96,6 +96,7 @@
 			    yasnippet
 			    sql-indent
 			    markdown-mode
+			    clojure-mode
 			    ))
 
 ;; repositories with packages
